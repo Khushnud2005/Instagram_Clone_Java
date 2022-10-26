@@ -1,0 +1,8 @@
+package uz.example.instajclon.activity;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+public class BaseActivity extends AppCompatActivity {
+
+
+}
