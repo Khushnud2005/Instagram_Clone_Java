@@ -23,11 +23,14 @@ import uz.example.instajclon.fragment.UploadFragment;
  * Contains view pager with 5 fragments in MainActivity,
  * and pages can be controlled by BottomNavigationView
  */
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements HomeFragment.HomeListener,UploadFragment.UploadListener {
     String TAG = MainActivity.class.getSimpleName();
     ViewPager viewPager;
     BottomNavigationView bottomNavigationView; 
     int index = 0;
+
+    HomeFragment homeFragment;
+    UploadFragment uploadFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +41,6 @@ public class MainActivity extends BaseActivity {
     private void initViews() {
         viewPager = findViewById(R.id.viewPager);
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        setupViewPager(viewPager);
 
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @SuppressLint("NonConstantResourceId")
@@ -86,14 +88,35 @@ public class MainActivity extends BaseActivity {
 
             }
         });
+
+        homeFragment = new HomeFragment();
+        uploadFragment = new UploadFragment();
+        setupViewPager(viewPager);
     }
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new HomeFragment());
+        adapter.addFragment(homeFragment);
         adapter.addFragment(new SearchFragment());
-        adapter.addFragment(new UploadFragment());
+        adapter.addFragment(uploadFragment);
         adapter.addFragment(new FavoriteFragment());
         adapter.addFragment(new ProfileFragment());
         viewPager.setAdapter(adapter);
+    }
+
+    @Override
+    public void scrollToUpload() {
+        index = 2;
+        scrollByIndex(index);
+    }
+
+    @Override
+    public void scrollToHome() {
+        index = 0;
+        scrollByIndex(index);
+    }
+
+    private void scrollByIndex(int index) {
+        viewPager.setCurrentItem(index);
+        bottomNavigationView.getMenu().getItem(index).setChecked(true);
     }
 }

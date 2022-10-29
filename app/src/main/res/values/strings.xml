@@ -14,5 +14,5 @@
     <string name="str_upload">Upload</string>
     <string name="str_favorite">Favorite</string>
     <string name="str_profile">Profile</string>
-
+    <string name="str_write_caption">Write a caption</string>
 </resources>
