@@ -9,7 +9,11 @@
         <entry key="..\:/Users/SuperJet/AndroidStudioProjects/InstaJClon/app/src/main/res/layout/activity_signin.xml" value="0.22083333333333333" />
         <entry key="..\:/Users/SuperJet/AndroidStudioProjects/InstaJClon/app/src/main/res/layout/activity_signup.xml" value="0.22083333333333333" />
         <entry key="..\:/Users/SuperJet/AndroidStudioProjects/InstaJClon/app/src/main/res/layout/fragment_favorite.xml" value="0.22083333333333333" />
+        <entry key="..\:/Users/SuperJet/AndroidStudioProjects/InstaJClon/app/src/main/res/layout/fragment_home.xml" value="0.22083333333333333" />
+        <entry key="..\:/Users/SuperJet/AndroidStudioProjects/InstaJClon/app/src/main/res/layout/fragment_profile.xml" value="0.22083333333333333" />
         <entry key="..\:/Users/SuperJet/AndroidStudioProjects/InstaJClon/app/src/main/res/layout/fragment_upload.xml" value="0.22083333333333333" />
+        <entry key="..\:/Users/SuperJet/AndroidStudioProjects/InstaJClon/app/src/main/res/layout/item_post_favorite.xml" value="0.8800000000000001" />
+        <entry key="..\:/Users/SuperJet/AndroidStudioProjects/InstaJClon/app/src/main/res/layout/item_post_home.xml" value="0.31841432225063937" />
         <entry key="..\:/Users/SuperJet/AndroidStudioProjects/InstaJClon/app/src/main/res/menu/navigation.xml" value="0.22083333333333333" />
       </map>
     </option>

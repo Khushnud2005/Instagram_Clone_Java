@@ -15,4 +15,7 @@
     <string name="str_favorite">Favorite</string>
     <string name="str_profile">Profile</string>
     <string name="str_write_caption">Write a caption</string>
+    <string name="fullName">Xushnud</string>
+    <string name="str_fake_caption">Glide is fast ans efficient open source media management and image loading framework</string>
+    <string name="str_fake_time">October 30,2022</string>
 </resources>
