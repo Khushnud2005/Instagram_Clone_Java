@@ -18,4 +18,10 @@
     <string name="fullName">Xushnud</string>
     <string name="str_fake_caption">Glide is fast ans efficient open source media management and image loading framework</string>
     <string name="str_fake_time">October 30,2022</string>
+    <string name="str_follow">Follow</string>
+    <string name="str_following">Following</string>
+    <string name="str_followers">Followers</string>
+    <string name="str_posts">Posts</string>
+    <string name="str_fake_email">bayhushnud@gmail.com</string>
+    <string name="str_fake_fullName">Xushnud Boymurotov</string>
 </resources>

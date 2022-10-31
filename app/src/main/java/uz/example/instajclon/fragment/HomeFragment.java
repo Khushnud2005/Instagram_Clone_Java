@@ -25,7 +25,7 @@ import uz.example.instajclon.model.Post;
 public class HomeFragment extends BaseFragment {
     String TAG = HomeFragment.class.getSimpleName();
 
-    RecyclerView recyclerView;
+    RecyclerView rv_home;
     private HomeListener listener;
     public HomeFragment() {
         // Required empty public constructor
@@ -62,8 +62,8 @@ public class HomeFragment extends BaseFragment {
 
     private void initViews(View view ) {
         ImageView iv_camera = view.findViewById(R.id.iv_camera);
-        recyclerView = view.findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),1));
+        rv_home = view.findViewById(R.id.rv_home);
+        rv_home.setLayoutManager(new GridLayoutManager(getActivity(),1));
         refreshAdapter(loadPosts());
 
         iv_camera.setOnClickListener(new View.OnClickListener() {
@@ -76,7 +76,7 @@ public class HomeFragment extends BaseFragment {
 
     private void refreshAdapter(ArrayList<Post> items) {
         HomeAdapter adapter = new HomeAdapter(this, items);
-        recyclerView.setAdapter(adapter);
+        rv_home.setAdapter(adapter);
     }
 
     private ArrayList<Post> loadPosts() {

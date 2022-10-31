@@ -23,7 +23,7 @@ import uz.example.instajclon.model.Post;
 public class FavoriteFragment extends BaseFragment {
     String TAG = FavoriteFragment.class.getSimpleName();
 
-    RecyclerView recyclerView;
+    RecyclerView rv_favorite;
     
     public FavoriteFragment() {
         // Required empty public constructor
@@ -39,14 +39,14 @@ public class FavoriteFragment extends BaseFragment {
     }
 
     private void initViews(View view) {
-        recyclerView = view.findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),1));
+        rv_favorite = view.findViewById(R.id.rv_favorite);
+        rv_favorite.setLayoutManager(new GridLayoutManager(getActivity(),1));
         refreshAdapter(loadPosts());
     }
 
     private void refreshAdapter(ArrayList<Post> items) {
         FavoriteAdapter adapter = new FavoriteAdapter(this, items);
-        recyclerView.setAdapter(adapter);
+        rv_favorite.setAdapter(adapter);
     }
 
     private ArrayList<Post> loadPosts() {
