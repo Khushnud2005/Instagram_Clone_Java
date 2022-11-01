@@ -11,12 +11,13 @@ import android.view.WindowManager;
 import java.util.Objects;
 
 import uz.example.instajclon.R;
+import uz.example.instajclon.manager.AuthManager;
 import uz.example.instajclon.manager.PrefsManager;
 
 /**
  * In SplashActivity, user can visit SignInActivity or MainActivity
  */
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends BaseActivity {
     String TAG = SplashActivity.class.getSimpleName();
 
     boolean login = false;
@@ -30,9 +31,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private void initViews() {
 
-        if (Objects.equals(PrefsManager.getInstance(this).getData("login"), "true")){
-            login = true;
-        }
+        //if (Objects.equals(PrefsManager.getInstance(this).getData("login"), "true")) login = true;
         countDownTimer();
     }
 
@@ -45,24 +44,14 @@ public class SplashActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                if (login){
-                    callMainActivity();
+                if (AuthManager.isSignedIn()){
+                    callMainActivity(context);
                 }else{
-                    callSignInActivity();
+                    callSignInActivity(context);
                 }
             }
         }.start();
     }
 
-    private void callMainActivity() {
-        Intent intent = new  Intent(this,MainActivity.class);
-        startActivity(intent);
-        finish();
-    }
 
-    private void callSignInActivity() {
-        Intent intent = new  Intent(this,SignInActivity.class);
-        startActivity(intent);
-        finish();
-    }
 }

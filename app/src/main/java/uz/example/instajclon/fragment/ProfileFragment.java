@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import uz.example.instajclon.R;
 import uz.example.instajclon.activity.SignInActivity;
 import uz.example.instajclon.adapter.ProfileAdapter;
+import uz.example.instajclon.manager.AuthManager;
 import uz.example.instajclon.manager.PrefsManager;
 import uz.example.instajclon.model.Post;
 
@@ -65,6 +66,7 @@ public class ProfileFragment extends BaseFragment {
         iv_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AuthManager.signOut();
                 callSignInActivity();
             }
         });
@@ -137,7 +139,7 @@ public class ProfileFragment extends BaseFragment {
         return items;
     }
     private void callSignInActivity() {
-        PrefsManager.getInstance(getContext()).saveData("login","false");
+        //PrefsManager.getInstance(getContext()).saveData("login","false");
         Intent intent = new Intent(getActivity(), SignInActivity.class);
         startActivity(intent);
 
