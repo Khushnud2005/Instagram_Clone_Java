@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.sangcomz.fishbun.FishBun;
 import com.sangcomz.fishbun.adapter.image.impl.GlideAdapter;
@@ -26,11 +27,18 @@ import com.sangcomz.fishbun.adapter.image.impl.GlideAdapter;
 import java.util.ArrayList;
 
 import uz.example.instajclon.R;
+import uz.example.instajclon.activity.MainActivity;
 import uz.example.instajclon.activity.SignInActivity;
 import uz.example.instajclon.adapter.ProfileAdapter;
 import uz.example.instajclon.manager.AuthManager;
+import uz.example.instajclon.manager.DBManager;
 import uz.example.instajclon.manager.PrefsManager;
+import uz.example.instajclon.manager.StorageManager;
+import uz.example.instajclon.manager.handler.DBUserHandler;
+import uz.example.instajclon.manager.handler.StorageHandler;
 import uz.example.instajclon.model.Post;
+import uz.example.instajclon.model.User;
+import uz.example.instajclon.utils.Logger;
 
 /**
  * In ProfileFragment, user can check his/her posts and counts and change profile photo
@@ -86,12 +94,51 @@ public class ProfileFragment extends BaseFragment {
                 pickFishBunPhoto();
             }
         });
+        loadUserInfo();
         refreshAdapter(loadPosts());
     }
-    private void uploadPickedPhoto() {
-        if (pickedPhoto != null) {
-            Log.d(TAG,pickedPhoto.getPath().toString());
-        }
+
+    private void loadUserInfo() {
+        DBManager.loadUser(AuthManager.currentUser().getUid(), new DBUserHandler() {
+            @Override
+            public void onSuccess(User user) {
+                if (user != null) {
+                    showUserInfo(user);
+                }
+            }
+
+            @Override
+            public void onError(Exception exception) {
+
+            }
+        });
+    }
+
+    private void showUserInfo(User user) {
+        tv_fullname.setText(user.getFullname());
+        tv_email.setText(user.getEmail());
+        Glide.with(this).load(user.getUserImg())
+                .placeholder(R.drawable.avatar)
+                .error(R.drawable.avatar)
+                .into(iv_profile);
+    }
+
+    private void uploadUserPhoto() {
+        showLoading(requireActivity());
+        if (pickedPhoto == null) return;
+        StorageManager.uploadUserPhoto(pickedPhoto, new StorageHandler() {
+            @Override
+            public void onSuccess(String imgUrl) {
+                dismissLoading();
+                DBManager.updateUserImage(imgUrl);
+                iv_profile.setImageURI(pickedPhoto);
+            }
+
+            @Override
+            public void onError(Exception exception) {
+                Logger.d(TAG,exception.getMessage());
+            }
+        });
 
     }
     /**
@@ -114,7 +161,7 @@ public class ProfileFragment extends BaseFragment {
                         if (result.getData() != null){
                             allPhotos = result.getData().getParcelableArrayListExtra(FishBun.INTENT_PATH);
                             pickedPhoto = allPhotos.get(0);
-                            uploadPickedPhoto();
+                            uploadUserPhoto();
                         }
 
                     }

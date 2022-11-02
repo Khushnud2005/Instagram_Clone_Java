@@ -19,7 +19,7 @@ public class AuthManager {
         return currentUser() != null;
     }
 
-    private static FirebaseUser currentUser() {
+    public static FirebaseUser currentUser() {
         return firebaseAuth.getCurrentUser();
     }
 

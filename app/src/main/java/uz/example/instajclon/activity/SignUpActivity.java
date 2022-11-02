@@ -14,7 +14,9 @@ import com.google.firebase.auth.FirebaseAuthException;
 
 import uz.example.instajclon.R;
 import uz.example.instajclon.manager.AuthManager;
+import uz.example.instajclon.manager.DBManager;
 import uz.example.instajclon.manager.handler.AuthHandler;
+import uz.example.instajclon.manager.handler.DBUserHandler;
 import uz.example.instajclon.model.User;
 import uz.example.instajclon.utils.Logger;
 import uz.example.instajclon.utils.Utils;
@@ -48,9 +50,17 @@ public class SignUpActivity extends BaseActivity {
                 String fullname = et_fullname.getText().toString().trim();
                 String email = et_email.getText().toString().trim();
                 String password = et_password.getText().toString().trim();
+                String cpassword = et_cpassword.getText().toString().trim();
+
                 if(!fullname.isEmpty() && !email.isEmpty() && !password.isEmpty()){
-                    User user = new User(fullname, email, password,"");
-                    firebaseSignUp(user);
+                    if (cpassword.equals(password)){
+                        User user = new User(fullname, email, password,"");
+                        firebaseSignUp(user);
+                    }else {
+                        Utils.toast(context,"Password Confirmation Failed !");
+                    }
+                }else{
+                    Utils.toast(context,"Please Fil All Fields");
                 }
             }
         });
@@ -69,10 +79,8 @@ public class SignUpActivity extends BaseActivity {
         AuthManager.signUp(user.getEmail(), user.getPassword(), new AuthHandler() {
             @Override
             public void onSuccess(String uid) {
-                dismissLoading();
                 user.setUid(uid);
-                Utils.toast(context,getString(R.string.str_signup_success));
-                callMainActivity(context);
+                storeUserToDB(user);
             }
 
             @Override
@@ -114,6 +122,22 @@ public class SignUpActivity extends BaseActivity {
 
                 }
 
+            }
+        });
+    }
+
+    private void storeUserToDB(User user) {
+        DBManager.storeUser(user, new DBUserHandler() {
+            @Override
+            public void onSuccess(User user) {
+                dismissLoading();
+                Utils.toast(context,getString(R.string.str_signup_success));
+                callMainActivity(context);
+            }
+
+            @Override
+            public void onError(Exception exception) {
+                Utils.toast(context,getString(R.string.str_signup_failed));
             }
         });
     }

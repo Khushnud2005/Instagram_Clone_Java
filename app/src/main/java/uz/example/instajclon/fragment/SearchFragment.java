@@ -16,6 +16,9 @@ import java.util.ArrayList;
 
 import uz.example.instajclon.R;
 import uz.example.instajclon.adapter.SearchAdapter;
+import uz.example.instajclon.manager.AuthManager;
+import uz.example.instajclon.manager.DBManager;
+import uz.example.instajclon.manager.handler.DBUsersHandler;
 import uz.example.instajclon.model.User;
 
 /**
@@ -61,27 +64,27 @@ public class SearchFragment extends BaseFragment {
                 usersByKeyword(keyword);
             }
         });
-        refreshAdapter(loadUsers());
+        loadUsers();
     }
     private void refreshAdapter(ArrayList<User> items) {
         SearchAdapter adapter = new SearchAdapter(this, items);
         rv_search.setAdapter(adapter);
     }
-    private ArrayList<User> loadUsers(){
-        items = new ArrayList<User>();
-        items.add(new User("xushnud","bayhushnud@gmail.com"));
-        items.add(new User("zokir","zokir@gmail.com"));
-        items.add(new User("shokir","shokir@gmail.com"));
-        items.add(new User("botir","botir@gmail.com"));
-        items.add(new User("xushnud","bayhushnud@gmail.com"));
-        items.add(new User("zokir","zokir@gmail.com"));
-        items.add(new User("shokir","shokir@gmail.com"));
-        items.add(new User("botir","botir@gmail.com"));
-        items.add(new User("xushnud","bayhushnud@gmail.com"));
-        items.add(new User("zokir","zokir@gmail.com"));
-        items.add(new User("shokir","shokir@gmail.com"));
-        items.add(new User("botir","botir@gmail.com"));
-        return items;
+    private void loadUsers(){
+        String uid = AuthManager.currentUser().getUid();
+        DBManager.loadUsers(new DBUsersHandler() {
+            @Override
+            public void onSuccess(ArrayList<User> users) {
+                items.clear();
+                items.addAll(users);
+                refreshAdapter(items);
+            }
+
+            @Override
+            public void onError(Exception exception) {
+
+            }
+        });
     }
     void usersByKeyword(String keyword) {
         if (keyword.isEmpty())

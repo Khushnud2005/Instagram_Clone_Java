@@ -8,6 +8,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.ArrayList;
@@ -38,8 +39,14 @@ public class SearchAdapter extends BaseAdapter {
         if (holder instanceof UserViewHolder) {
             TextView tv_fullname = ((UserViewHolder) holder).tv_fullname;
             TextView tv_email = ((UserViewHolder) holder).tv_email;
+            ShapeableImageView iv_profile = ((UserViewHolder) holder).iv_profile;
             tv_fullname.setText(user.getFullname());
             tv_email.setText(user.getEmail());
+
+            Glide.with(fragment).load(user.getUserImg())
+                    .placeholder(R.drawable.avatar)
+                    .error(R.drawable.avatar)
+                    .into(iv_profile);
         }
     }
 

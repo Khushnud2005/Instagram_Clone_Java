@@ -31,7 +31,7 @@ public class BaseActivity extends AppCompatActivity {
         dismissLoading();
     }
 
-    void showLoading(Activity activity ) {
+    public void showLoading(Activity activity ) {
         if (activity == null) return;
 
         if (progressDialog != null && progressDialog.isShowing()) {
@@ -49,7 +49,7 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    protected void dismissLoading() {
+    public void dismissLoading() {
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
