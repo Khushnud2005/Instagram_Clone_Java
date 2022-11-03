@@ -34,6 +34,7 @@ import uz.example.instajclon.manager.AuthManager;
 import uz.example.instajclon.manager.DBManager;
 import uz.example.instajclon.manager.PrefsManager;
 import uz.example.instajclon.manager.StorageManager;
+import uz.example.instajclon.manager.handler.DBPostsHandler;
 import uz.example.instajclon.manager.handler.DBUserHandler;
 import uz.example.instajclon.manager.handler.StorageHandler;
 import uz.example.instajclon.model.Post;
@@ -95,7 +96,22 @@ public class ProfileFragment extends BaseFragment {
             }
         });
         loadUserInfo();
-        refreshAdapter(loadPosts());
+        loadMyPosts();
+    }
+
+    private void loadMyPosts() {
+        String uid = AuthManager.currentUser().getUid();
+        DBManager.loadPosts(uid, new DBPostsHandler() {
+            @Override
+            public void onSuccess(ArrayList<Post> posts) {
+                tv_posts.setText(String.valueOf(posts.size()));
+                refreshAdapter(posts);
+            }
+            @Override
+            public void onError(Exception e) {
+
+            }
+        });
     }
 
     private void loadUserInfo() {

@@ -2,6 +2,7 @@ package uz.example.instajclon.manager;
 
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -9,6 +10,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -16,8 +18,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
+import uz.example.instajclon.manager.handler.DBPostHandler;
+import uz.example.instajclon.manager.handler.DBPostsHandler;
 import uz.example.instajclon.manager.handler.DBUserHandler;
 import uz.example.instajclon.manager.handler.DBUsersHandler;
+import uz.example.instajclon.model.Post;
 import uz.example.instajclon.model.User;
 
 public class DBManager {
@@ -97,8 +102,104 @@ public class DBManager {
             }
         });
     }
+
     public static void updateUserImage(String userImg) {
         String uid = AuthManager.currentUser().getUid();
         database.collection(USER_PATH).document(uid).update("userImg", userImg);
+    }
+
+    public static void storePosts(Post post , DBPostHandler handler) {
+        Log.d("storePosts",post.getUid());
+        CollectionReference reference = database.collection(USER_PATH).document(post.getUid()).collection(POST_PATH);
+        String id = reference.document().getId();
+        post.setId(id);
+
+        reference.document(post.getId()).set(post).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                handler.onSuccess(post);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                handler.onError(e);
+            }
+        });
+    }
+    public static void storeFeeds(Post post , DBPostHandler handler) {
+        CollectionReference reference = database.collection(USER_PATH).document(post.getUid()).collection(FEED_PATH);
+
+        reference.document(post.getId()).set(post).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                handler.onSuccess(post);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                handler.onError(e);
+            }
+        });
+    }
+    public static void loadFeeds(String uid, DBPostsHandler handler) {
+        CollectionReference reference = database.collection(USER_PATH).document(uid).collection(FEED_PATH);
+        reference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                ArrayList<Post> posts = new ArrayList<Post>();
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        String id = document.getString("id");
+                        String caption = document.getString("caption");
+                        String postImg = document.getString("postImg");
+                        String fullname = document.getString("fullname");
+                        String userImg = document.getString("userImg");
+                        String currentDate = document.getString("currentDate");
+                        String userId = document.getString("uid");
+
+                        Post post = new  Post(id, caption, postImg);
+                        post.setUid(userId);
+                        post.setFullname(fullname);
+                        post.setUserImg(userImg);
+                        post.setCurrentDate(currentDate);
+                        posts.add(post);
+                    }
+                    handler.onSuccess(posts);
+                } else {
+                    handler.onError(task.getException());
+                }
+            }
+        });
+    }
+
+    public static void loadPosts(String uid, DBPostsHandler handler) {
+        CollectionReference reference = database.collection(USER_PATH).document(uid).collection(POST_PATH);
+        reference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                ArrayList<Post> posts = new ArrayList<Post>();
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        String id = document.getString("id");
+                        String caption = document.getString("caption");
+                        String postImg = document.getString("postImg");
+                        String fullname = document.getString("fullname");
+                        String userImg = document.getString("userImg");
+                        String currentDate = document.getString("currentDate");
+                        String userId = document.getString("uid");
+
+                        Post post = new  Post(id, caption, postImg);
+                        post.setUid(userId);
+                        post.setFullname(fullname);
+                        post.setUserImg(userImg);
+                        post.setCurrentDate(currentDate);
+                        posts.add(post);
+                    }
+                    handler.onSuccess(posts);
+                } else {
+                    handler.onError(task.getException());
+                }
+            }
+        });
     }
 }

@@ -26,6 +26,14 @@ import com.sangcomz.fishbun.adapter.image.impl.GlideAdapter;
 import java.util.ArrayList;
 
 import uz.example.instajclon.R;
+import uz.example.instajclon.manager.AuthManager;
+import uz.example.instajclon.manager.DBManager;
+import uz.example.instajclon.manager.StorageManager;
+import uz.example.instajclon.manager.handler.DBPostHandler;
+import uz.example.instajclon.manager.handler.DBUserHandler;
+import uz.example.instajclon.manager.handler.StorageHandler;
+import uz.example.instajclon.model.Post;
+import uz.example.instajclon.model.User;
 import uz.example.instajclon.utils.Utils;
 
 /**
@@ -151,13 +159,81 @@ public class UploadFragment extends BaseFragment {
     private void uploadNewPost() {
         String caption = et_caption.getText().toString().trim();
         if (!caption.isEmpty() && pickedPhoto != null) {
-            listener.scrollToHome();
-            et_caption.setText("");
-            allPhotos.clear();
+            showLoading(requireActivity());
+            uploadPostPhoto(pickedPhoto,caption);
         }
         if (caption.isEmpty() || pickedPhoto == null){
             Utils.toast(this.requireContext(),"Please pick Photo && write Caption !!!");
         }
+    }
+
+    private void uploadPostPhoto(Uri uri, String caption) {
+        StorageManager.uploadPostPhoto(uri, new StorageHandler() {
+            @Override
+            public void onSuccess(String imgUrl ) {
+                Post post = new Post(caption, imgUrl);
+                post.setCurrentTime();
+
+                String uid = AuthManager.currentUser().getUid();
+
+                DBManager.loadUser(uid, new DBUserHandler() {
+                    @Override
+                    public void onSuccess(User user) {
+                        post.setUid(uid);
+                        post.setFullname(user.getFullname());
+                        post.setUserImg(user.getUserImg());
+                        storePostToDB(post);
+                    }
+                    @Override
+                    public void onError(Exception e ) {
+                    }
+                });
+            }
+
+            @Override
+            public void onError(Exception exception ) {
+
+            }
+        });
+    }
+
+    private void storePostToDB(Post post) {
+
+            DBManager.storePosts(post, new DBPostHandler() {
+                @Override
+                public void onSuccess(Post post) {
+                    storeFeedToDB(post);
+                }
+
+                @Override
+                public void onError(Exception exception ) {
+                    Log.d("storePost",exception.getMessage());
+                }
+            });
+        
+    }
+
+    private void storeFeedToDB(Post post) {
+        DBManager.storeFeeds(post, new DBPostHandler() {
+            @Override
+            public void onSuccess(Post post) {
+                dismissLoading();
+                resetAll();
+                listener.scrollToHome();
+            }
+
+            @Override
+            public void onError(Exception exception) {
+                dismissLoading();
+            }
+        });
+    }
+
+    private void resetAll() {
+        allPhotos.clear();
+        et_caption.getText().clear();
+        pickedPhoto = null;
+        fl_photo.setVisibility(View.GONE);
     }
 
     /**

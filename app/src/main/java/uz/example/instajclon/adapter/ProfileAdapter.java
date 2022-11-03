@@ -39,7 +39,10 @@ public class ProfileAdapter extends BaseAdapter {
         Post post = items.get(position);
         if (holder instanceof PostViewHolder) {
             ShapeableImageView iv_post = ((PostViewHolder) holder).iv_post;
+            TextView tv_caption = ((PostViewHolder) holder).tv_caption;
+            tv_caption.setText(post.getCaption());
             setViewHeight(iv_post);
+
             Glide.with(fragment).load(post.getPostImg()).into(iv_post);
         }
     }
