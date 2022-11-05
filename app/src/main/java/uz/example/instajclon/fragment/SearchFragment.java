@@ -13,11 +13,15 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
 
 import uz.example.instajclon.R;
 import uz.example.instajclon.adapter.SearchAdapter;
 import uz.example.instajclon.manager.AuthManager;
 import uz.example.instajclon.manager.DBManager;
+import uz.example.instajclon.manager.handler.DBFollowHandler;
+import uz.example.instajclon.manager.handler.DBUserHandler;
 import uz.example.instajclon.manager.handler.DBUsersHandler;
 import uz.example.instajclon.model.User;
 
@@ -75,9 +79,20 @@ public class SearchFragment extends BaseFragment {
         DBManager.loadUsers(new DBUsersHandler() {
             @Override
             public void onSuccess(ArrayList<User> users) {
-                items.clear();
-                items.addAll(users);
-                refreshAdapter(items);
+                DBManager.loadFollowing(uid, new DBUsersHandler(){
+                    @Override
+                    public void onSuccess(ArrayList<User> following ) {
+                        items.clear();
+                        items.addAll(mergedUsers(uid,users, following));
+                        refreshAdapter(items);
+                    }
+
+                    @Override
+                    public void onError(Exception exception) {
+
+                    }
+
+                });
             }
 
             @Override
@@ -86,6 +101,23 @@ public class SearchFragment extends BaseFragment {
             }
         });
     }
+
+    private ArrayList<User> mergedUsers(String uid, ArrayList<User> users, ArrayList<User> following) {
+        ArrayList<User> items = new ArrayList<User>();
+        for (User u : users){
+            for(User f : following){
+                if(u.getUid().equals(f.getUid())){
+                    u.setFollowed(true);
+                    break;
+                }
+            }
+            if(!Objects.equals(uid, u.getUid())){
+                items.add(u);
+            }
+        }
+        return items;
+    }
+
     void usersByKeyword(String keyword) {
         if (keyword.isEmpty())
             refreshAdapter(items);
@@ -97,4 +129,72 @@ public class SearchFragment extends BaseFragment {
 
         refreshAdapter(users);
     }
+
+    public void followOrUnfollow(User to) {
+        String uid = AuthManager.currentUser().getUid();
+        if (!to.isFollowed()){
+            followUser(uid,to);
+        }else{
+            unFollow(uid,to);
+        }
+    }
+
+    private void followUser(String uid, User to) {
+        DBManager.loadUser(uid,new DBUserHandler(){
+            @Override
+            public void onSuccess(User me) {
+                DBManager.followUser(me,to,new DBFollowHandler(){
+                    @Override
+                    public void onSuccess(boolean isDone) {
+                        to.setFollowed(true);
+                        //store Posts to my feed
+                        DBManager.storePostsToMyFeed(uid, to);
+                    }
+
+                    @Override
+                    public void onError(Exception exception) {
+
+                    }
+
+                });
+            }
+
+            @Override
+            public void onError(Exception exception) {
+
+            }
+
+        });
+    }
+
+    private void unFollow(String uid, User to) {
+        DBManager.loadUser(uid,new DBUserHandler(){
+            @Override
+            public void onSuccess(User me) {
+                DBManager.unFollowUser(me,to,new DBFollowHandler(){
+                    @Override
+                    public void onSuccess(boolean isDone) {
+                        to.setFollowed(false);
+                        //store Posts to my feed
+                        DBManager.removePostsFromMyFeed(uid, to);
+                    }
+
+                    @Override
+                    public void onError(Exception exception) {
+
+                    }
+
+                });
+            }
+
+            @Override
+            public void onError(Exception exception) {
+
+            }
+
+        });
+    }
+
+
+
 }

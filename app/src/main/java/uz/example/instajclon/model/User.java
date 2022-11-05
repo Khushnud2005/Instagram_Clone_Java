@@ -7,6 +7,12 @@ public class User {
     String password;
     String userImg;
 
+    String device_id = "";
+    String device_type = "A";
+    String device_token = "";
+
+    boolean isFollowed = false;
+
     public User(String fullname, String email) {
         this.fullname = fullname;
         this.email = email;
@@ -47,5 +53,13 @@ public class User {
 
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public boolean isFollowed() {
+        return isFollowed;
+    }
+
+    public void setFollowed(boolean followed) {
+        isFollowed = followed;
     }
 }

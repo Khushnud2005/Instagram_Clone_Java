@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,24 @@ public class HomeFragment extends BaseFragment {
         initViews(view);
         return view;
     }
+
+    /*@Override
+    public void setMenuVisibility(boolean menuVisible) {
+        if (menuVisible && feeds.size() > 0) {
+            feeds.clear();
+            loadMyFeeds();
+        }
+    }*/
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        if (isVisibleToUser && feeds.size() > 0) {
+            feeds.clear();
+            loadMyFeeds();
+            Log.d("onVisibil","Working : Yes");
+        }
+    }
+
+
     /**
      * onAttach is for communication of Fragments
      */
@@ -86,6 +105,7 @@ public class HomeFragment extends BaseFragment {
                 feeds.clear();
                 feeds.addAll(posts);
                 refreshAdapter(feeds);
+                Log.d("onVisibil","Feeds : "+String.valueOf(feeds.size()));
             }
 
             @Override

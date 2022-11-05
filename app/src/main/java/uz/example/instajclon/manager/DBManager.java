@@ -18,6 +18,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
+import uz.example.instajclon.manager.handler.DBFollowHandler;
 import uz.example.instajclon.manager.handler.DBPostHandler;
 import uz.example.instajclon.manager.handler.DBPostsHandler;
 import uz.example.instajclon.manager.handler.DBUserHandler;
@@ -201,5 +202,153 @@ public class DBManager {
                 }
             }
         });
+    }
+
+    public static void followUser(User me, User to, DBFollowHandler handler){
+        //User(to) in my following
+        database.collection(USER_PATH).document(me.getUid()).collection(FOLLOWING_PATH).document(to.getUid()).set(to).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                database.collection(USER_PATH).document(to.getUid()).collection(FOLLOWERS_PATH).document(me.getUid()).set(me).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        handler.onSuccess(true);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        handler.onError(e);
+                    }
+                });
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                handler.onError(e);
+            }
+        });
+
+
+
+    }
+
+    public static void unFollowUser(User me, User to, DBFollowHandler handler){
+        //User(to) in my following
+        database.collection(USER_PATH).document(me.getUid()).collection(FOLLOWING_PATH).document(to.getUid())
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                database.collection(USER_PATH).document(to.getUid()).collection(FOLLOWERS_PATH).document(me.getUid())
+                        .delete()
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        handler.onSuccess(true);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        handler.onError(e);
+                    }
+                });
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                handler.onError(e);
+            }
+        });
+    }
+
+    public static void loadFollowing(String uid,DBUsersHandler handler ) {
+        database.collection(USER_PATH).document(uid).collection(FOLLOWING_PATH).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        ArrayList<User> users = new  ArrayList<User>();
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                String uid = document.getString("uid");
+                                String fullname = document.getString("fullname");
+                                String email = document.getString("email");
+                                String userImg = document.getString("userImg");
+                                User user = new User(fullname, email, userImg);
+                                user.setUid(uid);
+                                users.add(user);
+                            }
+                            handler.onSuccess(users);
+                        } else {
+                            handler.onError(task.getException());
+                        }
+                    }
+                });
+    }
+
+    public static void loadFollowers(String uid,DBUsersHandler handler) {
+        database.collection(USER_PATH).document(uid).collection(FOLLOWERS_PATH).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        ArrayList<User> users = new  ArrayList<User>();
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                String uid = document.getString("uid");
+                                String fullname = document.getString("fullname");
+                                String email = document.getString("email");
+                                String userImg = document.getString("userImg");
+                                User user = new User(fullname, email, userImg);
+                                user.setUid(uid);
+                                users.add(user);
+                            }
+                            handler.onSuccess(users);
+                        } else {
+                            handler.onError(task.getException());
+                        }
+                    }
+                });
+    }
+
+    public static void storePostsToMyFeed(String uid, User to) {
+        loadPosts(to.getUid(), new DBPostsHandler() {
+            @Override
+            public void onSuccess(ArrayList<Post> posts) {
+                for (Post post : posts) {
+                    storeFeed(uid, post);
+                }
+            }
+
+            @Override
+            public void onError(Exception exception) {
+
+            }
+        });
+    }
+    public static void storeFeed(String uid ,Post post) {
+        CollectionReference reference = database.collection(USER_PATH).document(uid).collection(FEED_PATH);
+        reference.document(post.getId()).set(post);
+    }
+
+    public static void removePostsFromMyFeed(String uid, User to) {
+        loadPosts(to.getUid(), new DBPostsHandler() {
+            @Override
+            public void onSuccess(ArrayList<Post> posts) {
+                for (Post post : posts) {
+                    removeFeed(uid, post);
+                }
+            }
+
+            @Override
+            public void onError(Exception exception) {
+
+            }
+        });
+    }
+
+    public static void removeFeed(String uid ,Post post) {
+        CollectionReference reference = database.collection(USER_PATH).document(uid).collection(FEED_PATH);
+        reference.document(post.getId()).delete();
     }
 }

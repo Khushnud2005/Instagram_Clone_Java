@@ -116,7 +116,7 @@
                         android:id="@+id/tv_posts"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="625"
+                        android:text="0"
                         android:textColor="@color/black"
                         android:textStyle="bold" />
 
@@ -137,7 +137,7 @@
                         android:id="@+id/tv_followers"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="4,275"
+                        android:text="0"
                         android:textColor="@color/black"
                         android:textStyle="bold" />
 
@@ -158,7 +158,7 @@
                         android:id="@+id/tv_following"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="845"
+                        android:text="0"
                         android:textColor="@color/black"
                         android:textStyle="bold" />
 

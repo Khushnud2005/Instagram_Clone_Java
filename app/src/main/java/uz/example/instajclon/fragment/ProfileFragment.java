@@ -36,6 +36,7 @@ import uz.example.instajclon.manager.PrefsManager;
 import uz.example.instajclon.manager.StorageManager;
 import uz.example.instajclon.manager.handler.DBPostsHandler;
 import uz.example.instajclon.manager.handler.DBUserHandler;
+import uz.example.instajclon.manager.handler.DBUsersHandler;
 import uz.example.instajclon.manager.handler.StorageHandler;
 import uz.example.instajclon.model.Post;
 import uz.example.instajclon.model.User;
@@ -97,6 +98,8 @@ public class ProfileFragment extends BaseFragment {
         });
         loadUserInfo();
         loadMyPosts();
+        loadMyFollowing();
+        loadMyFollowers();
     }
 
     private void loadMyPosts() {
@@ -188,23 +191,35 @@ public class ProfileFragment extends BaseFragment {
         ProfileAdapter adapter = new ProfileAdapter(this, items);
         rv_profile.setAdapter(adapter);
     }
-
-    private ArrayList<Post> loadPosts(){
-        ArrayList<Post>items = new ArrayList<Post>();
-        items.add(new Post("https://images.unsplash.com/photo-1657214058650-31cc8400713b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwxfHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=600&q=60"));
-        items.add(new Post("https://images.unsplash.com/photo-1664575196044-195f135295df?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwyMXx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=60"));
-        items.add(new Post("https://images.unsplash.com/photo-1509395286499-2d94a9e0c814?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTR8fHBob25lfGVufDB8MnwwfHw%3D&auto=format&fit=crop&w=600&q=60"));
-        items.add(new Post("https://images.unsplash.com/photo-1665436752144-4e9236563aff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHx0b3BpYy1mZWVkfDEyMHw2c01WalRMU2tlUXx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=600&q=60"));
-        items.add(new Post("https://images.unsplash.com/photo-1657214058650-31cc8400713b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwxfHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=600&q=60"));
-        items.add(new Post("https://images.unsplash.com/photo-1664575196044-195f135295df?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwyMXx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=60"));
-        items.add(new Post("https://images.unsplash.com/photo-1509395286499-2d94a9e0c814?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTR8fHBob25lfGVufDB8MnwwfHw%3D&auto=format&fit=crop&w=600&q=60"));
-        items.add(new Post("https://images.unsplash.com/photo-1665436752144-4e9236563aff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHx0b3BpYy1mZWVkfDEyMHw2c01WalRMU2tlUXx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=600&q=60"));
-        return items;
-    }
     private void callSignInActivity() {
         //PrefsManager.getInstance(getContext()).saveData("login","false");
         Intent intent = new Intent(getActivity(), SignInActivity.class);
         startActivity(intent);
 
+    }
+    private void loadMyFollowing(){
+        String uid = AuthManager.currentUser().getUid();
+        DBManager.loadFollowing(uid, new DBUsersHandler() {
+            @Override
+            public void onSuccess(ArrayList<User> users) {
+                tv_following.setText(String.valueOf(users.size()));
+            }
+            @Override
+            public void  onError(Exception e) {
+            }
+        });
+    }
+
+    private void loadMyFollowers(){
+        String uid = AuthManager.currentUser().getUid();
+        DBManager.loadFollowers(uid, new DBUsersHandler(){
+            @Override
+            public void onSuccess(ArrayList<User> users) {
+                tv_followers.setText(String.valueOf(users.size()));
+            }
+            @Override
+            public void onError(Exception e) {
+            }
+        });
     }
 }

@@ -47,6 +47,24 @@ public class SearchAdapter extends BaseAdapter {
                     .placeholder(R.drawable.avatar)
                     .error(R.drawable.avatar)
                     .into(iv_profile);
+
+            TextView tv_follow = ((UserViewHolder) holder).tv_follow;
+            tv_follow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!user.isFollowed()){
+                        tv_follow.setText(fragment.getString(R.string.str_following));
+                    }else{
+                        tv_follow.setText(fragment.getString(R.string.str_follow));
+                    }
+                    fragment.followOrUnfollow(user);
+                }
+            });
+            if (!user.isFollowed()){
+                tv_follow.setText(fragment.getString(R.string.str_follow));
+            }else{
+                tv_follow.setText(fragment.getString(R.string.str_following));
+            }
         }
     }
 
