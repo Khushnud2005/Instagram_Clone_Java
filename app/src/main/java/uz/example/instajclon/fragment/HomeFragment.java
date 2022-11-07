@@ -22,6 +22,7 @@ import uz.example.instajclon.manager.AuthManager;
 import uz.example.instajclon.manager.DBManager;
 import uz.example.instajclon.manager.handler.DBPostsHandler;
 import uz.example.instajclon.model.Post;
+import uz.example.instajclon.utils.Utils;
 
 /**
  * In HomeFragment, user can check his/her posts and friends posts
@@ -42,21 +43,21 @@ public class HomeFragment extends BaseFragment {
         return view;
     }
 
-    /*@Override
-    public void setMenuVisibility(boolean menuVisible) {
-        if (menuVisible && feeds.size() > 0) {
-            feeds.clear();
-            loadMyFeeds();
-        }
-    }*/
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        if (isVisibleToUser && feeds.size() > 0) {
-            feeds.clear();
+    public void setMenuVisibility(boolean menuVisible) {
+        if (menuVisible) {
+            //Utils.toast(this.requireContext(),"setUserVisibleHint Working : Yes");
             loadMyFeeds();
-            Log.d("onVisibil","Working : Yes");
         }
     }
+    /*@Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        if (isVisibleToUser && feeds.size()>0) {
+            loadMyFeeds();
+            Log.d("onVisibil","Working : Yes");
+            Utils.toast(this.requireContext(),"setUserVisibleHint Working : Yes");
+        }
+    }*/
 
 
     /**
@@ -84,7 +85,6 @@ public class HomeFragment extends BaseFragment {
         ImageView iv_camera = view.findViewById(R.id.iv_camera);
         rv_home = view.findViewById(R.id.rv_home);
         rv_home.setLayoutManager(new GridLayoutManager(getActivity(),1));
-
         iv_camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,6 +97,7 @@ public class HomeFragment extends BaseFragment {
 
     private void loadMyFeeds() {
         showLoading(requireActivity());
+
         String uid = AuthManager.currentUser().getUid();
         DBManager.loadFeeds(uid, new DBPostsHandler() {
             @Override

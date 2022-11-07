@@ -3,6 +3,7 @@ package uz.example.instajclon.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -25,7 +26,7 @@ import uz.example.instajclon.fragment.UploadFragment;
  */
 public class MainActivity extends BaseActivity implements HomeFragment.HomeListener,UploadFragment.UploadListener {
     String TAG = MainActivity.class.getSimpleName();
-    ViewPager viewPager;
+    ViewPager2 viewPager;
     BottomNavigationView bottomNavigationView; 
     int index = 0;
 
@@ -71,7 +72,24 @@ public class MainActivity extends BaseActivity implements HomeFragment.HomeListe
                 return true;
             }
         });
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                index = position;
+                bottomNavigationView.getMenu().getItem(index).setChecked(true);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                super.onPageScrollStateChanged(state);
+            }
+        });
+        /*viewPager.addOnPageChangeListener(new ViewPager2.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -87,14 +105,14 @@ public class MainActivity extends BaseActivity implements HomeFragment.HomeListe
             public void onPageScrollStateChanged(int state) {
 
             }
-        });
+        });*/
 
         homeFragment = new HomeFragment();
         uploadFragment = new UploadFragment();
         setupViewPager(viewPager);
     }
-    private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+    private void setupViewPager(ViewPager2 viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(),getLifecycle());
         adapter.addFragment(homeFragment);
         adapter.addFragment(new SearchFragment());
         adapter.addFragment(uploadFragment);
