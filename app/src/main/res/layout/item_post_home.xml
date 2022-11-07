@@ -44,7 +44,7 @@
                 android:textColor="@color/black"/>
         </LinearLayout>
         <ImageView
-            android:id="@+id/iv_more"
+            android:id="@+id/iv_more_home"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@mipmap/ic_more"/>
@@ -64,20 +64,20 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp">
+        android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/iv_like"
+            android:id="@+id/iv_like_home"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="10dp"
             android:src="@mipmap/ic_favorite" />
 
         <ImageView
-            android:id="@+id/iv_share"
+            android:id="@+id/iv_share_home"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
+            android:layout_height="match_parent"
+            android:padding="10dp"
             android:src="@mipmap/ic_share" />
     </LinearLayout>
 

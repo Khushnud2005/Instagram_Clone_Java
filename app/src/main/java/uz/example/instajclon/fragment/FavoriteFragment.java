@@ -1,6 +1,7 @@
 package uz.example.instajclon.fragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,14 @@ import uz.example.instajclon.R;
 import uz.example.instajclon.activity.SignInActivity;
 import uz.example.instajclon.adapter.FavoriteAdapter;
 import uz.example.instajclon.adapter.HomeAdapter;
+import uz.example.instajclon.manager.AuthManager;
+import uz.example.instajclon.manager.DBManager;
+import uz.example.instajclon.manager.StorageManager;
+import uz.example.instajclon.manager.handler.DBPostHandler;
+import uz.example.instajclon.manager.handler.DBPostsHandler;
 import uz.example.instajclon.model.Post;
+import uz.example.instajclon.utils.DialogListener;
+import uz.example.instajclon.utils.Utils;
 
 /**
  * In FavoriteFragment, user can check all liked posts
@@ -37,24 +45,74 @@ public class FavoriteFragment extends BaseFragment {
         initViews(view);
         return view;
     }
-
+    @Override
+    public void setMenuVisibility(boolean menuVisible) {
+        if (menuVisible) {
+            //Utils.toast(this.requireContext(),"setUserVisibleHint Working : Yes");
+            loadLikedFeeds();
+            //Utils.toast(this.getContext(),"MenuVisibil");
+            Log.d(TAG,"MenuVisible");
+        }
+    }
     private void initViews(View view) {
         rv_favorite = view.findViewById(R.id.rv_favorite);
         rv_favorite.setLayoutManager(new GridLayoutManager(getActivity(),1));
-        refreshAdapter(loadPosts());
+
+    }
+    public void likeOrUnlikePost(Post post) {
+        String uid = AuthManager.currentUser().getUid();
+        DBManager.likeFeedPost(uid, post);
+
+        loadLikedFeeds();
+    }
+
+    private void loadLikedFeeds() {
+
+        Log.d("@@loadLiked","Favorite : Working");
+        showLoading(requireActivity());
+        String uid = AuthManager.currentUser().getUid();
+        DBManager.loadLikedFeeds(uid, new DBPostsHandler() {
+            @Override
+            public void onSuccess(ArrayList<Post> posts) {
+                dismissLoading();
+                refreshAdapter(posts);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                dismissLoading();
+            }
+        });
     }
 
     private void refreshAdapter(ArrayList<Post> items) {
         FavoriteAdapter adapter = new FavoriteAdapter(this, items);
         rv_favorite.setAdapter(adapter);
     }
+    public void showDeleteDialog(Post post ){
+        Utils.dialogDouble(requireContext(), getString(R.string.str_delete_post), new DialogListener() {
+            @Override
+            public void onCallback(Boolean isChosen) {
+                if(isChosen){
+                    deletePost(post);
+                }
+            }
+        });
+    }
 
-    private ArrayList<Post> loadPosts() {
-        ArrayList<Post> items = new ArrayList<>();
+    public void deletePost(Post post) {
+        String photoUrl = post.getPostImg();
+        DBManager.deletePost(post, new DBPostHandler() {
+            @Override
+            public void onSuccess(Post post) {
+                StorageManager.deletePhoto(photoUrl);
+                loadLikedFeeds();
+            }
 
-        items.add(new Post("https://images.unsplash.com/photo-1664575196044-195f135295df?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwyMXx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=60"));
-        items.add(new Post("https://images.unsplash.com/photo-1509395286499-2d94a9e0c814?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTR8fHBob25lfGVufDB8MnwwfHw%3D&auto=format&fit=crop&w=600&q=60"));
+            @Override
+            public void onError(Exception e ) {
 
-        return items;
+            }
+        });
     }
 }

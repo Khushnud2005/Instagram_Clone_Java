@@ -15,6 +15,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 import uz.example.instajclon.R;
 import uz.example.instajclon.manager.AuthManager;
 import uz.example.instajclon.manager.DBManager;
+import uz.example.instajclon.manager.PrefsManager;
 import uz.example.instajclon.manager.handler.AuthHandler;
 import uz.example.instajclon.manager.handler.DBUserHandler;
 import uz.example.instajclon.model.User;
@@ -127,6 +128,10 @@ public class SignUpActivity extends BaseActivity {
     }
 
     private void storeUserToDB(User user) {
+
+        user.setDevice_token(PrefsManager.getInstance(context).loadDeviceToken());
+        user.setDevice_id(Utils.getDeviceID(this));
+
         DBManager.storeUser(user, new DBUserHandler() {
             @Override
             public void onSuccess(User user) {

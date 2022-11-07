@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 import uz.example.instajclon.R;
 import uz.example.instajclon.fragment.HomeFragment;
+import uz.example.instajclon.manager.AuthManager;
 import uz.example.instajclon.model.Post;
 
 public class HomeAdapter extends BaseAdapter{
@@ -44,6 +45,8 @@ public class HomeAdapter extends BaseAdapter{
             ShapeableImageView iv_profile = ((PostViewHolder) holder).iv_profile;
             TextView tv_caption = ((PostViewHolder) holder).tv_caption;
             TextView tv_time = ((PostViewHolder) holder).tv_time;
+            ImageView iv_like = ((PostViewHolder) holder).iv_like;
+            ImageView iv_more = ((PostViewHolder) holder).iv_more;
 
             tv_fullname.setText(post.getFullname());
             tv_caption.setText(post.getCaption());
@@ -52,6 +55,39 @@ public class HomeAdapter extends BaseAdapter{
             Glide.with(fragment).load(post.getPostImg()).into(iv_post);
             Glide.with(fragment).load(post.getUserImg()).placeholder(R.drawable.avatar)
                     .error(R.drawable.avatar).into(iv_profile);
+
+            iv_like.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(post.isLiked()){
+                        post.setLiked(false);
+                        iv_like.setImageResource(R.mipmap.ic_favorite);
+                    }else{
+                        post.setLiked(true);
+                        iv_like.setImageResource(R.mipmap.ic_liked);
+                    }
+                    fragment.likeOrUnlikePost(post);
+                }
+            });
+
+            if(post.isLiked()){
+                iv_like.setImageResource(R.mipmap.ic_liked);
+            }else{
+                iv_like.setImageResource(R.mipmap.ic_favorite);
+            }
+
+            String uid = AuthManager.currentUser().getUid();
+            if(uid.equals(post.getUid())){
+                iv_more.setVisibility(View.VISIBLE);
+            }else{
+                iv_more.setVisibility(View.GONE);
+            }
+            iv_more.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    fragment.showDeleteDialog(post);
+                }
+            });
         }
     }
 
@@ -76,9 +112,9 @@ public class HomeAdapter extends BaseAdapter{
             tv_fullname = itemView.findViewById(R.id.tv_full_name);
             tv_time = itemView.findViewById(R.id.tv_time);
             tv_caption = itemView.findViewById(R.id.tv_caption);
-            iv_more = itemView.findViewById(R.id.iv_more);
-            iv_like = itemView.findViewById(R.id.iv_like);
-            iv_share = itemView.findViewById(R.id.iv_share);
+            iv_more = itemView.findViewById(R.id.iv_more_home);
+            iv_like = itemView.findViewById(R.id.iv_like_home);
+            iv_share = itemView.findViewById(R.id.iv_share_home);
         }
     }
 }

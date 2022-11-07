@@ -7,6 +7,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -19,6 +20,7 @@ import uz.example.instajclon.fragment.HomeFragment;
 import uz.example.instajclon.fragment.ProfileFragment;
 import uz.example.instajclon.fragment.SearchFragment;
 import uz.example.instajclon.fragment.UploadFragment;
+import uz.example.instajclon.utils.Utils;
 
 /**
  * Contains view pager with 5 fragments in MainActivity,
@@ -50,22 +52,32 @@ public class MainActivity extends BaseActivity implements HomeFragment.HomeListe
                 switch (item.getItemId()){
                     case R.id.navigation_home : {
                         viewPager.setCurrentItem(0);
+                        //Utils.toast(context,"home Clicked");
+                        Log.d(TAG,"home Clicked");
                         break;
                     }
                     case R.id.navigation_search : {
                         viewPager.setCurrentItem(1);
+                        //Utils.toast(context,"search Clicked");
+                        Log.d(TAG,"search Clicked");
                         break;
                     }
                     case R.id.navigation_upload : {
                         viewPager.setCurrentItem(2);
+                        //Utils.toast(context,"upload Clicked");
+                        Log.d(TAG,"Upload Clicked");
                         break;
                     }
                     case R.id.navigation_favorite : {
                         viewPager.setCurrentItem(3);
+                        //Utils.toast(context,"Favorite Clicked");
+                        Log.d(TAG,"Favorite Clicked");
                         break;
                     }
                     case R.id.navigation_profile : {
                         viewPager.setCurrentItem(4);
+                        //Utils.toast(context,"Profile Clicked");
+                        Log.d(TAG,"Profile Clicked");
                         break;
                     }
                 }

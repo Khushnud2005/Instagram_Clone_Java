@@ -35,4 +35,13 @@ public class PrefsManager {
         editor.clear();
         editor.apply();
     }
+
+    public void storeDeviceToken(String token) {
+        SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
+        prefsEditor.putString("device_token", token);
+        prefsEditor.apply();
+    }
+    public String loadDeviceToken() {
+        return sharedPreferences.getString("device_token", "");
+    }
 }

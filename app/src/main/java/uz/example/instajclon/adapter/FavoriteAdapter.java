@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import uz.example.instajclon.R;
 import uz.example.instajclon.fragment.FavoriteFragment;
 import uz.example.instajclon.fragment.HomeFragment;
+import uz.example.instajclon.manager.AuthManager;
 import uz.example.instajclon.model.Post;
 
 public class FavoriteAdapter extends BaseAdapter{
@@ -40,7 +41,46 @@ public class FavoriteAdapter extends BaseAdapter{
         Post post = items.get(position);
         if (holder instanceof PostViewHolder) {
             ShapeableImageView iv_post = ((PostViewHolder) holder).iv_post;
+            ShapeableImageView iv_profile = ((PostViewHolder) holder).iv_profile;
+            TextView tv_fullname = ((PostViewHolder) holder).tv_fullname;
+            TextView tv_caption = ((PostViewHolder) holder).tv_caption;
+            TextView tv_time = ((PostViewHolder) holder).tv_time;
+            ImageView iv_like = ((PostViewHolder) holder).iv_like;
+            ImageView iv_more = ((PostViewHolder) holder).iv_more;
+
+            tv_fullname.setText(post.getFullname());
+            tv_caption.setText(post.getCaption());
+            tv_time.setText(post.getCurrentDate());
+            Glide.with(fragment).load(post.getUserImg()).placeholder(R.drawable.avatar)
+                    .error(R.drawable.avatar).into(iv_profile);
             Glide.with(fragment).load(post.getPostImg()).into(iv_post);
+
+            iv_like.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(post.isLiked()){
+                        post.setLiked(false);
+                        iv_like.setImageResource(R.mipmap.ic_favorite);
+                    }else{
+                        post.setLiked(true);
+                        iv_like.setImageResource(R.mipmap.ic_liked);
+                    }
+                    fragment.likeOrUnlikePost(post);
+                }
+            });
+
+            String uid = AuthManager.currentUser().getUid();
+            if(uid.equals(post.getUid())){
+                iv_more.setVisibility(View.VISIBLE);
+            }else{
+                iv_more.setVisibility(View.GONE);
+            }
+            iv_more.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    fragment.showDeleteDialog(post);
+                }
+            });
         }
     }
 

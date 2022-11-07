@@ -20,8 +20,11 @@ import uz.example.instajclon.R;
 import uz.example.instajclon.adapter.HomeAdapter;
 import uz.example.instajclon.manager.AuthManager;
 import uz.example.instajclon.manager.DBManager;
+import uz.example.instajclon.manager.StorageManager;
+import uz.example.instajclon.manager.handler.DBPostHandler;
 import uz.example.instajclon.manager.handler.DBPostsHandler;
 import uz.example.instajclon.model.Post;
+import uz.example.instajclon.utils.DialogListener;
 import uz.example.instajclon.utils.Utils;
 
 /**
@@ -91,7 +94,7 @@ public class HomeFragment extends BaseFragment {
                 listener.scrollToUpload();
             }
         });
-        loadMyFeeds();
+        //loadMyFeeds();
 
     }
 
@@ -120,7 +123,38 @@ public class HomeFragment extends BaseFragment {
         HomeAdapter adapter = new HomeAdapter(this, items);
         rv_home.setAdapter(adapter);
     }
+    public void likeOrUnlikePost(Post post ) {
 
+        String uid = AuthManager.currentUser().getUid();
+        DBManager.likeFeedPost(uid, post);
+    }
+
+    public void showDeleteDialog(Post post){
+        Utils.dialogDouble(requireContext(), getString(R.string.str_delete_post), new DialogListener() {
+            @Override
+            public void onCallback(Boolean isChosen) {
+                if(isChosen){
+                    deletePost(post);
+                }
+            }
+        });
+    }
+
+    public void deletePost(Post post) {
+        String photoUrl = post.getPostImg();
+        DBManager.deletePost(post, new DBPostHandler() {
+            @Override
+            public void onSuccess(Post post ) {
+                StorageManager.deletePhoto(photoUrl);
+                loadMyFeeds();
+            }
+
+            @Override
+            public void onError(Exception e) {
+
+            }
+        });
+    }
 
 
     /**

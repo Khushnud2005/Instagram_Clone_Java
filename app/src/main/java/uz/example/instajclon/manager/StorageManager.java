@@ -1,6 +1,7 @@
 package uz.example.instajclon.manager;
 
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -76,6 +77,26 @@ public class StorageManager {
             @Override
             public void onFailure(@NonNull Exception e) {
                 handler.onError(e);
+            }
+        });
+    }
+
+    public static void deletePhoto(String url) {
+        if (url != null){
+            Log.d("@@@Url", url);
+        }
+        StorageReference photoRef = storage.getReferenceFromUrl(url);
+        photoRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                // File deleted successfully
+                Log.d("@@@Delete", "onSuccess: Post photo deleted");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // Uh-oh, an error occurred!
+                Log.d("@@@Delete", "onFailure: Post photo did not deleted");
             }
         });
     }

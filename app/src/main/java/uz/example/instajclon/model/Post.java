@@ -13,7 +13,7 @@ public class Post {
     String uid;
     String fullname;
     String userImg;
-
+    boolean isLiked = false;
     public Post(String postImg) {
         this.postImg = postImg;
     }
@@ -85,5 +85,13 @@ public class Post {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy hh:mm");
         currentDate = sdf.format(new Date());
         Log.d("setTime",currentDate);
+    }
+
+    public boolean isLiked() {
+        return isLiked;
+    }
+
+    public void setLiked(boolean liked) {
+        isLiked = liked;
     }
 }
