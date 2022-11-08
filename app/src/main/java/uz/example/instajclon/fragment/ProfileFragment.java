@@ -178,6 +178,7 @@ public class ProfileFragment extends BaseFragment {
                 .setImageAdapter(new GlideAdapter())
                 .setMaxCount(1)
                 .setMinCount(1)
+                .setCamera(true)
                 .setSelectedImages(allPhotos)
                 .startAlbumWithActivityResultCallback(photoLauncher);
     }
