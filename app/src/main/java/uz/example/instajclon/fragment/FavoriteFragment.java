@@ -1,5 +1,6 @@
 package uz.example.instajclon.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -114,5 +115,14 @@ public class FavoriteFragment extends BaseFragment {
 
             }
         });
+    }
+
+    public void sharePost(Post post){
+        Intent intent= new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_TEXT,post.getCaption()+" : "+post.getPostImg());
+        intent.putExtra("imgUrl",post.getPostImg());
+        intent.setType("text/plain");
+        startActivity(Intent.createChooser(intent,"Share To:"));
     }
 }

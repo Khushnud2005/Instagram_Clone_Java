@@ -59,9 +59,14 @@ public class DBManager {
                     String fullname = snapshot.getString("fullname");
                     String email = snapshot.getString("email");
                     String userImg = snapshot.getString("userImg");
+                    String token = snapshot.getString("device_token");
+                    if (token == null){
+                        token = "null";
+                    }
 
                     User user = new User(fullname, email, userImg);
                     user.setUid(uid);
+                    user.setDevice_token(token);
                     handler.onSuccess(user);
                 } else {
                     handler.onSuccess(null);
@@ -108,6 +113,12 @@ public class DBManager {
     public static void updateUserImage(String userImg) {
         String uid = AuthManager.currentUser().getUid();
         database.collection(USER_PATH).document(uid).update("userImg", userImg);
+    }
+    public static void updateUserDevIdAndDevToken(String dev_id,String dev_token){
+        String uid = AuthManager.currentUser().getUid();
+        database.collection(USER_PATH).document(uid).update("device_id", dev_id);
+        database.collection(USER_PATH).document(uid).update("device_token", dev_token);
+        database.collection(USER_PATH).document(uid).update("device_type", "A");
     }
 
     public static void storePosts(Post post , DBPostHandler handler) {

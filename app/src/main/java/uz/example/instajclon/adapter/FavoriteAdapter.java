@@ -47,6 +47,7 @@ public class FavoriteAdapter extends BaseAdapter{
             TextView tv_time = ((PostViewHolder) holder).tv_time;
             ImageView iv_like = ((PostViewHolder) holder).iv_like;
             ImageView iv_more = ((PostViewHolder) holder).iv_more;
+            ImageView iv_share = ((PostViewHolder) holder).iv_share;
 
             tv_fullname.setText(post.getFullname());
             tv_caption.setText(post.getCaption());
@@ -79,6 +80,12 @@ public class FavoriteAdapter extends BaseAdapter{
                 @Override
                 public void onClick(View v) {
                     fragment.showDeleteDialog(post);
+                }
+            });
+            iv_share.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    fragment.sharePost(post);
                 }
             });
         }

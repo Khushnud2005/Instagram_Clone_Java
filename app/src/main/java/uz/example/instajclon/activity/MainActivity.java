@@ -6,12 +6,18 @@ import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+
+import java.util.Map;
 
 import uz.example.instajclon.R;
 import uz.example.instajclon.adapter.ViewPagerAdapter;
@@ -20,6 +26,11 @@ import uz.example.instajclon.fragment.HomeFragment;
 import uz.example.instajclon.fragment.ProfileFragment;
 import uz.example.instajclon.fragment.SearchFragment;
 import uz.example.instajclon.fragment.UploadFragment;
+import uz.example.instajclon.manager.AuthManager;
+import uz.example.instajclon.manager.DBManager;
+import uz.example.instajclon.manager.PrefsManager;
+import uz.example.instajclon.manager.handler.DBUserHandler;
+import uz.example.instajclon.model.User;
 import uz.example.instajclon.utils.Utils;
 
 /**
@@ -32,6 +43,7 @@ public class MainActivity extends BaseActivity implements HomeFragment.HomeListe
     BottomNavigationView bottomNavigationView; 
     int index = 0;
 
+    BroadcastReceiver pushBroadcast;
     HomeFragment homeFragment;
     UploadFragment uploadFragment;
     @Override
@@ -118,10 +130,40 @@ public class MainActivity extends BaseActivity implements HomeFragment.HomeListe
 
             }
         });*/
+        DBManager.loadUser(AuthManager.currentUser().getUid(), new DBUserHandler() {
+            @Override
+            public void onSuccess(User user) {
+                Log.d("@@MainUpdate",user.toString());
+                if (user.getDevice_token().equals("null")){
+                    String devId = Utils.getDeviceID(context);
+                    String devToken = PrefsManager.getInstance(context).loadDeviceToken();
+                    DBManager.updateUserDevIdAndDevToken(devId,devToken);
+                    Log.d("@@MainUpdate","User Updated");
+                }
+            }
 
+            @Override
+            public void onError(Exception exception) {
+                Log.d("@@MainUpdate",exception.getMessage());
+            }
+        });
         homeFragment = new HomeFragment();
         uploadFragment = new UploadFragment();
         setupViewPager(viewPager);
+
+
+        pushBroadcast = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Bundle extras = intent.getExtras();
+
+                Log.d("@@Resiver","Title:"+extras.getString("title")+", Body : "+ extras.getString("message"));
+                Utils.toast(context,extras.getString("title")+" : "+extras.getString("message"));
+            }
+        };
+        IntentFilter intentFilter= new IntentFilter();
+        intentFilter.addAction("com.google.firebase.MESSAGING_EVENT");
+        registerReceiver(pushBroadcast,intentFilter);
     }
     private void setupViewPager(ViewPager2 viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(),getLifecycle());
@@ -148,5 +190,11 @@ public class MainActivity extends BaseActivity implements HomeFragment.HomeListe
     private void scrollByIndex(int index) {
         viewPager.setCurrentItem(index);
         bottomNavigationView.getMenu().getItem(index).setChecked(true);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(pushBroadcast);
     }
 }

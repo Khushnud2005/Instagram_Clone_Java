@@ -140,6 +140,7 @@ public class ProfileFragment extends BaseFragment {
                 .placeholder(R.drawable.avatar)
                 .error(R.drawable.avatar)
                 .into(iv_profile);
+        Log.d("@@ShowUser","User Token : "+user.getDevice_token());
     }
 
     private void uploadUserPhoto() {

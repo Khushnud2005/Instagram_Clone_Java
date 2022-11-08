@@ -47,6 +47,7 @@ public class HomeAdapter extends BaseAdapter{
             TextView tv_time = ((PostViewHolder) holder).tv_time;
             ImageView iv_like = ((PostViewHolder) holder).iv_like;
             ImageView iv_more = ((PostViewHolder) holder).iv_more;
+            ImageView iv_share = ((PostViewHolder) holder).iv_share;
 
             tv_fullname.setText(post.getFullname());
             tv_caption.setText(post.getCaption());
@@ -62,9 +63,11 @@ public class HomeAdapter extends BaseAdapter{
                     if(post.isLiked()){
                         post.setLiked(false);
                         iv_like.setImageResource(R.mipmap.ic_favorite);
+                        fragment.disLiked();
                     }else{
                         post.setLiked(true);
                         iv_like.setImageResource(R.mipmap.ic_liked);
+                        fragment.liked();
                     }
                     fragment.likeOrUnlikePost(post);
                 }
@@ -86,6 +89,12 @@ public class HomeAdapter extends BaseAdapter{
                 @Override
                 public void onClick(View v) {
                     fragment.showDeleteDialog(post);
+                }
+            });
+            iv_share.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    fragment.sharePost(post);
                 }
             });
         }

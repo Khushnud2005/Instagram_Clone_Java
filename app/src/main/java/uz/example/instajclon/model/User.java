@@ -78,4 +78,19 @@ public class User {
     public void setDevice_token(String device_token) {
         this.device_token = device_token;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "uid='" + uid + '\'' +
+                ", fullname='" + fullname + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", userImg='" + userImg + '\'' +
+                ", device_id='" + device_id + '\'' +
+                ", device_type='" + device_type + '\'' +
+                ", device_token='" + device_token + '\'' +
+                ", isFollowed=" + isFollowed +
+                '}';
+    }
 }
