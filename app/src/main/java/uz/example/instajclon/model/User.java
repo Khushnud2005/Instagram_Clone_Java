@@ -79,6 +79,14 @@ public class User {
         this.device_token = device_token;
     }
 
+    public void setDevice_type(String device_type) {
+        this.device_type = device_type;
+    }
+
+    public String getDevice_type() {
+        return device_type;
+    }
+
     @Override
     public String toString() {
         return "User{" +

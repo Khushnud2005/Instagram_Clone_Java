@@ -134,11 +134,12 @@ public class MainActivity extends BaseActivity implements HomeFragment.HomeListe
             @Override
             public void onSuccess(User user) {
                 Log.d("@@MainUpdate",user.toString());
-                if (user.getDevice_token().equals("null")){
+                if (user.getDevice_token().equals("null") || user.getDevice_type() == null){
                     String devId = Utils.getDeviceID(context);
                     String devToken = PrefsManager.getInstance(context).loadDeviceToken();
                     DBManager.updateUserDevIdAndDevToken(devId,devToken);
                     Log.d("@@MainUpdate","User Updated");
+
                 }
             }
 

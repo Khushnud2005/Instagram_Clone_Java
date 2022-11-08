@@ -24,9 +24,9 @@ public class StorageManager {
     static FirebaseStorage storage = FirebaseStorage.getInstance();
     static StorageReference storageRef = storage.getReference();
 
-    public static void uploadUserPhoto(Uri uri, StorageHandler handler) {
+    public static void uploadUserPhoto(Uri uri,String ext, StorageHandler handler) {
 
-        String filename = AuthManager.currentUser().getUid() + ".png";
+        String filename = AuthManager.currentUser().getUid() + "."+ext;
         UploadTask uploadTask = storageRef.child(USER_PHOTO_PATH).child(filename).putFile(uri);
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -53,8 +53,8 @@ public class StorageManager {
         });
     }
 
-    public static void uploadPostPhoto(Uri uri, StorageHandler handler) {
-        String filename = AuthManager.currentUser().getUid() + "_" + System.currentTimeMillis() + ".png";
+    public static void uploadPostPhoto(Uri uri,String ext, StorageHandler handler) {
+        String filename = AuthManager.currentUser().getUid() + "_" + System.currentTimeMillis() + "."+ext;
         UploadTask uploadTask = storageRef.child(POST_PHOTO_PATH).child(filename).putFile(uri);
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -90,13 +90,13 @@ public class StorageManager {
             @Override
             public void onSuccess(Void unused) {
                 // File deleted successfully
-                Log.d("@@@Delete", "onSuccess: Post photo deleted");
+                Log.d("@@@Delete", "onSuccess: Photo deleted");
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 // Uh-oh, an error occurred!
-                Log.d("@@@Delete", "onFailure: Post photo did not deleted");
+                Log.d("@@@Delete", "onFailure: Photo did not deleted");
             }
         });
     }

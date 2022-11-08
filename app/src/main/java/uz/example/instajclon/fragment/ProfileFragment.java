@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -55,6 +56,8 @@ public class ProfileFragment extends BaseFragment {
     TextView tv_followers;
     TextView tv_following;
     ShapeableImageView iv_profile;
+    String userImg = "";
+    String exten;
 
     Uri pickedPhoto = null;
     ArrayList<Uri> allPhotos = new ArrayList<Uri>();
@@ -136,6 +139,9 @@ public class ProfileFragment extends BaseFragment {
     private void showUserInfo(User user) {
         tv_fullname.setText(user.getFullname());
         tv_email.setText(user.getEmail());
+        if (!user.getUserImg().isEmpty()){
+            userImg = user.getUserImg();
+        }
         Glide.with(this).load(user.getUserImg())
                 .placeholder(R.drawable.avatar)
                 .error(R.drawable.avatar)
@@ -146,7 +152,10 @@ public class ProfileFragment extends BaseFragment {
     private void uploadUserPhoto() {
         showLoading(requireActivity());
         if (pickedPhoto == null) return;
-        StorageManager.uploadUserPhoto(pickedPhoto, new StorageHandler() {
+        if (!userImg.isEmpty()){
+            StorageManager.deletePhoto(userImg);
+        }
+        StorageManager.uploadUserPhoto(pickedPhoto, exten, new StorageHandler() {
             @Override
             public void onSuccess(String imgUrl) {
                 dismissLoading();
@@ -181,6 +190,8 @@ public class ProfileFragment extends BaseFragment {
                         if (result.getData() != null){
                             allPhotos = result.getData().getParcelableArrayListExtra(FishBun.INTENT_PATH);
                             pickedPhoto = allPhotos.get(0);
+                            String mimeType = requireActivity().getContentResolver().getType(pickedPhoto);
+                            exten = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
                             uploadUserPhoto();
                         }
 

@@ -131,6 +131,7 @@ public class SignUpActivity extends BaseActivity {
 
         user.setDevice_token(PrefsManager.getInstance(context).loadDeviceToken());
         user.setDevice_id(Utils.getDeviceID(this));
+        user.setDevice_type("A");
 
         DBManager.storeUser(user, new DBUserHandler() {
             @Override

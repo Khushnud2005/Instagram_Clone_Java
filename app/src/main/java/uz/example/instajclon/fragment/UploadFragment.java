@@ -48,6 +48,7 @@ public class UploadFragment extends BaseFragment {
     EditText et_caption;
     private UploadListener listener;
     Uri pickedPhoto;
+    String exten;
     static ArrayList<Uri> allPhotos = new  ArrayList<Uri>();
     public UploadFragment() {
         // Required empty public constructor
@@ -138,6 +139,8 @@ public class UploadFragment extends BaseFragment {
                         if (result.getData() != null){
                             allPhotos = result.getData().getParcelableArrayListExtra(FishBun.INTENT_PATH);
                             pickedPhoto = allPhotos.get(0);
+                            String mimeType = requireActivity().getContentResolver().getType(pickedPhoto);
+                            exten = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
                             showPickedPhoto();
                         }
 
@@ -168,7 +171,7 @@ public class UploadFragment extends BaseFragment {
     }
 
     private void uploadPostPhoto(Uri uri, String caption) {
-        StorageManager.uploadPostPhoto(uri, new StorageHandler() {
+        StorageManager.uploadPostPhoto(uri,exten, new StorageHandler() {
             @Override
             public void onSuccess(String imgUrl ) {
                 Post post = new Post(caption, imgUrl);
